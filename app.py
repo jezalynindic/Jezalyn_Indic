@@ -45,13 +45,10 @@ def get_course():
 
 @app.route('/greet')
 def greet():
-    name = request.args.get('name', 'Student')
-    section = request.args.get('section', 'Unknown')
-
+    name = request.args.get('name', 'Guest')
     return jsonify({
-        "message": f"Hello {name} from {section}!"
+        "message": f"Hello {name}!"
     })
-
 
 @app.route('/hello')
 def say_hello():
