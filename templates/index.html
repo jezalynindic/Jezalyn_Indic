@@ -43,6 +43,16 @@
     <button onclick="sayHello()">Say Hello</button>
 
     <div id="greetingResult"></div>
+    <hr>
+
+    <div class="section">
+    <h2>My Skills API</h2>
+    <p>Click the button to retrieve my custom API data.</p>
+
+    <button onclick="loadMySkills()">Load My Skills</button>
+
+    <div id="skillsResult"></div>
+    </div>
 
     <script>
         function loadStudent() {
@@ -82,6 +92,28 @@
                         'Unable to connect to Greeting API.';
                 });
         }
+   
+        function loadMySkills() {
+            const result = document.getElementById('skillsResult');
+
+            fetch('/my-skills')
+                 .then(response => {
+            if (!response.ok) {
+                throw new Error('Request failed');
+            }
+            return response.json();
+        })
+        .then(data => {
+            result.innerHTML =
+                '<p><b>Name:</b> ' + data.name + '</p>' +
+                '<p><b>Program:</b> ' + data.program + '</p>' +
+                '<p><b>Skills:</b> ' + data.skills.join(', ') + '</p>' +
+                '<p><b>Interest:</b> ' + data.interest + '</p>';
+        })
+        .catch(error => {
+            result.textContent = 'Unable to retrieve custom API data.';
+        });
+    }     
     </script>
 
 </body>

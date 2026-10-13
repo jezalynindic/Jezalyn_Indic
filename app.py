@@ -42,6 +42,15 @@ def get_course():
         "academic_year": "2026-2027"
     })
 
+# Custom API: My Skills
+@app.route('/my-skills')
+def my_skills():
+    return jsonify({
+        "name": "Jezalyn Indic",
+        "program": "BSIT",
+        "skills": ["Python", "HTML", "CSS"],
+        "interest": "Web Development"
+    })
 
 @app.route('/greet')
 def greet():
