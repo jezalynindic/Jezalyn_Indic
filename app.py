@@ -1,5 +1,6 @@
 
 import sqlite3
+import requests
 from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
@@ -204,6 +205,29 @@ def api_students():
     conn.close()
 
     return jsonify([dict(row) for row in rows])
+
+
+# GET CLASSMATE'S STUDENTS - STEP 8
+@app.route('/classmate-students', methods=['GET'])
+def get_classmate_students():
+    classmate_api = "PASTE_YOUR_CLASSMATE_API_URL_HERE"
+
+    try:
+        response = requests.get(classmate_api, timeout=20)
+        response.raise_for_status()
+
+        return jsonify(response.json())
+
+    except requests.RequestException as e:
+        return jsonify({
+            "error": "Unable to get classmate records",
+            "details": str(e)
+        }), 502
+
+    except ValueError:
+        return jsonify({
+            "error": "Classmate API did not return valid JSON"
+        }), 502
 
 
 if __name__ == '__main__':
