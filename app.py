@@ -210,7 +210,7 @@ def api_students():
 # GET CLASSMATE'S STUDENTS - STEP 8
 @app.route('/classmate-students', methods=['GET'])
 def get_classmate_students():
-    classmate_api = "https://flask-palec-sethclaire-api.onrender.com/students"
+    classmate_api = "https://flask-palec-sethclaire-api.onrender.com/api/students"
 
     try:
        
