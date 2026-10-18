@@ -213,10 +213,27 @@ def get_classmate_students():
     classmate_api = "https://flask-palec-sethclaire-api.onrender.com/"
 
     try:
+       
+# GET CLASSMATE'S STUDENTS - STEP 8
+@app.route('/classmate-students', methods=['GET'])
+def get_classmate_students():
+    classmate_api = "PASTE_YOUR_CLASSMATE_API_URL_HERE"
+
+    try:
         response = requests.get(classmate_api, timeout=20)
         response.raise_for_status()
 
-        return jsonify(response.json())
+        try:
+            return jsonify(response.json())
+        except ValueError:
+            return jsonify({
+                "error": "Classmate API did not return valid JSON",
+                "status_code": response.status_code,
+                "content_type": response.headers.get(
+                    "Content-Type", "unknown"
+                ),
+                "response_preview": response.text[:300]
+            }), 502
 
     except requests.RequestException as e:
         return jsonify({
@@ -224,10 +241,6 @@ def get_classmate_students():
             "details": str(e)
         }), 502
 
-    except ValueError:
-        return jsonify({
-            "error": "Classmate API did not return valid JSON"
-        }), 502
 
 
 if __name__ == '__main__':
