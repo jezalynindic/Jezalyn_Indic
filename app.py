@@ -1,3 +1,4 @@
+
 import sqlite3
 from flask import Flask, jsonify, request, render_template
 
@@ -107,6 +108,102 @@ def greet():
 def say_hello():
     name = request.args.get('name', 'Student')
     return jsonify({"message": f"Hello, {name}!"})
+
+
+# Step 2: CREATE - Add a new student
+@app.route('/api/students', methods=['POST'])
+def add_student():
+    data = request.get_json()
+
+    conn = get_db_connection()
+    cursor = conn.execute(
+        """INSERT INTO students
+        (student_id, name, program, year, section)
+        VALUES (?, ?, ?, ?, ?)""",
+        (
+            data['student_id'],
+            data['name'],
+            data['program'],
+            data['year'],
+            data['section']
+        )
+    )
+
+    conn.commit()
+    new_id = cursor.lastrowid
+    conn.close()
+
+    return jsonify({
+        "message": "Student added",
+        "id": new_id
+    }), 201
+
+
+# Step 3: READ - Get one student by ID
+@app.route('/api/students/<int:id>', methods=['GET'])
+def api_get_student(id):
+    conn = get_db_connection()
+
+    student = conn.execute(
+        'SELECT * FROM students WHERE id = ?', (id,)
+    ).fetchone()
+
+    conn.close()
+
+    if student is None:
+        return jsonify({"error": "Student not found"}), 404
+
+    return jsonify(dict(student))
+
+
+# Step 3: UPDATE - Update a student
+@app.route('/api/students/<int:id>', methods=['PUT'])
+def update_student(id):
+    data = request.get_json()
+
+    conn = get_db_connection()
+    cursor = conn.execute(
+        """UPDATE students
+        SET student_id=?, name=?, program=?,
+            year=?, section=?
+        WHERE id=?""",
+        (
+            data['student_id'],
+            data['name'],
+            data['program'],
+            data['year'],
+            data['section'],
+            id
+        )
+    )
+
+    conn.commit()
+    updated = cursor.rowcount
+    conn.close()
+
+    if updated == 0:
+        return jsonify({"error": "Student not found"}), 404
+
+    return jsonify({"message": "Student updated"})
+
+
+# Step 3: DELETE - Delete a student
+@app.route('/api/students/<int:id>', methods=['DELETE'])
+def delete_student(id):
+    conn = get_db_connection()
+
+    cursor = conn.execute(
+        'DELETE FROM students WHERE id = ?', (id,)
+    )
+
+    conn.commit()
+    deleted = cursor.rowcount
+    conn.close()
+
+    if deleted == 0:
+        return jsonify({"error": "Student not found"}), 404
+
+    return jsonify({"message": "Student deleted"})
 
 
 if __name__ == '__main__':
