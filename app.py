@@ -214,12 +214,6 @@ def get_classmate_students():
 
     try:
        
-# GET CLASSMATE'S STUDENTS - STEP 8
-@app.route('/classmate-students', methods=['GET'])
-def get_classmate_students():
-    classmate_api = "PASTE_YOUR_CLASSMATE_API_URL_HERE"
-
-    try:
         response = requests.get(classmate_api, timeout=20)
         response.raise_for_status()
 
