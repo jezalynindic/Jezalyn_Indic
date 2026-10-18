@@ -839,19 +839,19 @@
 
 
         // STEP 8: LOAD CLASSMATE'S RECORDS
-        const classmateAPI =
-            'https://flask-palec-sethclaire-api.onrender.com';
-
         async function loadClassmateRecords() {
             const message =
                 document.getElementById('comparisonMessage');
 
             try {
-                const response = await fetch(classmateAPI);
+                const response = await fetch('/classmate-students');
 
                 if (!response.ok) {
+                    const errorData = await response.json();
                     throw new Error(
-                        'Unable to retrieve classmate records. Check the API URL.'
+                        errorData.details ||
+                        errorData.error ||
+                        'Unable to retrieve classmate records.'
                     );
                 }
 
@@ -865,9 +865,9 @@
                 console.log("Classmate's records:", records);
             } catch (error) {
                 message.textContent =
-                    'Unable to load classmate records. Check the URL or CORS settings.';
+                    'Unable to load classmate records: ' + error.message;
 
-                console.error(error);
+                console.error('Classmate API error:', error);
             }
         }
 

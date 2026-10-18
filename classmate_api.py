@@ -1,7 +1,7 @@
 
 import requests
 
-url = "https://distura-kate-ashley.onrender.com/student"
+url = "https://flask-palec-sethclaire-api.onrender.com/students"
 
 try:
     response = requests.get(url, timeout=30)
