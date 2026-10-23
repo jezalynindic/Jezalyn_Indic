@@ -1,21 +1,41 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student API Interface</title>
 
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 900px;
+            max-width: 1000px;
             margin: 40px auto;
             padding: 20px;
+            color: #212529;
+        }
+
+        h1 {
+            text-align: center;
+            color: #0d6efd;
+        }
+
+        h2 {
+            color: #212529;
         }
 
         button {
             padding: 8px 14px;
             margin: 5px;
             cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.85;
         }
 
         input {
@@ -34,15 +54,14 @@
             margin-top: 20px;
             padding: 10px;
             border: 1px solid #cccccc;
-        }
-
-        h1 {
-            text-align: center;
+            border-radius: 4px;
         }
 
         hr {
             margin-top: 25px;
             margin-bottom: 25px;
+            border: 0;
+            border-top: 1px solid #cccccc;
         }
 
         .section {
@@ -64,32 +83,30 @@
 
         .add-btn {
             background-color: #198754;
-            color: white;
-            border: none;
         }
 
         .edit-btn {
             background-color: #0d6efd;
-            color: white;
-            border: none;
         }
 
         .delete-btn {
             background-color: #dc3545;
-            color: white;
-            border: none;
         }
 
         .select-btn {
             background-color: #6f42c1;
-            color: white;
-            border: none;
         }
 
         .clear-btn {
             background-color: #6c757d;
-            color: white;
-            border: none;
+        }
+
+        .view-btn {
+            background-color: #0d6efd;
+        }
+
+        .save-btn {
+            background-color: #198754;
         }
 
         .table-wrapper {
@@ -111,6 +128,11 @@
         th {
             background-color: #eeeeee;
         }
+
+        .status {
+            padding: 10px;
+            margin-top: 15px;
+        }
     </style>
 </head>
 
@@ -119,55 +141,67 @@
     <h1>Student API Interface</h1>
 
     <!-- STUDENT INFORMATION API -->
-    <h2>Student Information</h2>
+    <section class="section">
+        <h2>Student Information</h2>
 
-    <button onclick="loadStudent()">
-        Load Student Information
-    </button>
+        <button type="button" onclick="loadStudent()">
+            Load Student Information
+        </button>
 
-    <div id="result"></div>
+        <div id="result"></div>
+    </section>
 
     <hr>
 
     <!-- GREETING API -->
-    <h2>Greeting API</h2>
+    <section class="section">
+        <h2>Greeting API</h2>
 
-    <input
-        type="text"
-        id="greetingName"
-        placeholder="Enter your name"
-    >
+        <input
+            type="text"
+            id="greetingName"
+            placeholder="Enter your name"
+        >
 
-    <button onclick="sayHello()">Say Hello</button>
+        <button type="button" onclick="sayHello()">
+            Say Hello
+        </button>
 
-    <div id="greetingResult"></div>
+        <div id="greetingResult"></div>
+    </section>
 
     <hr>
 
     <!-- MY SKILLS API -->
-    <div class="section">
+    <section class="section">
         <h2>My Skills API</h2>
 
         <p>Click the button to retrieve my custom API data.</p>
 
-        <button onclick="loadMySkills()">Load My Skills</button>
+        <button type="button" onclick="loadMySkills()">
+            Load My Skills
+        </button>
 
         <div id="skillsResult"></div>
-    </div>
+    </section>
 
     <hr>
 
     <!-- STUDENTS FROM DATABASE -->
-    <h2>Students from Database</h2>
+    <section class="section">
+        <h2>Students from Database</h2>
 
-    <button onclick="loadStudents()">Load Students</button>
+        <button type="button" onclick="loadStudents()">
+            Load Students
+        </button>
 
-    <div id="studentList"></div>
+        <div id="studentList"></div>
+    </section>
 
     <hr>
 
     <!-- CRUD MANAGEMENT -->
-    <div class="section">
+    <section class="section">
         <h2>Student CRUD Management</h2>
 
         <p>Add, edit, or delete student records from your database.</p>
@@ -255,7 +289,7 @@
 
         </form>
 
-        <p id="crudMessage" role="status" aria-live="polite"></p>
+        <p id="crudMessage" class="status" role="status"></p>
 
         <h3>Student Records</h3>
 
@@ -276,16 +310,17 @@
                 <tbody id="crudStudentList"></tbody>
             </table>
         </div>
-    </div>
+    </section>
 
     <hr>
 
     <!-- STEP 9: MY RECORDS -->
-    <div class="section">
+    <section class="section">
         <h2>My Records</h2>
+
         <p>Source: My own students database.</p>
 
-        <button onclick="loadMyRecords()">
+        <button type="button" onclick="loadMyRecords()">
             Refresh My Records
         </button>
 
@@ -305,16 +340,17 @@
                 <tbody id="myRecords"></tbody>
             </table>
         </div>
-    </div>
+    </section>
 
     <hr>
 
     <!-- STEP 8: CLASSMATE'S RECORDS -->
-    <div class="section">
+    <section class="section">
         <h2>Classmate's Records</h2>
+
         <p>Source: Classmate's deployed API on Render.</p>
 
-        <button onclick="loadClassmateRecords()">
+        <button type="button" onclick="loadClassmateRecords()">
             Load Classmate's Records
         </button>
 
@@ -336,53 +372,54 @@
             </table>
         </div>
 
-        <p id="comparisonMessage" role="status" aria-live="polite"></p>
-    </div>
+        <p id="comparisonMessage" class="status" role="status"
+           aria-live="polite"></p>
+    </section>
 
     <script>
         // STUDENT INFORMATION API
-        function loadStudent() {
-            fetch('/student')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Request failed');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const result = document.getElementById('result');
-                    result.textContent = '';
+        async function loadStudent() {
+            const result = document.getElementById('result');
 
-                    const details = [
-                        ['Student ID', data.student_id],
-                        ['Name', data.name],
-                        ['Program', data.program],
-                        ['Year', data.year],
-                        ['Section', data.section]
-                    ];
+            try {
+                const response = await fetch('/student');
 
-                    details.forEach(([label, value]) => {
-                        const p = document.createElement('p');
-                        const b = document.createElement('b');
+                if (!response.ok) {
+                    throw new Error('Request failed');
+                }
 
-                        b.textContent = label + ': ';
-                        p.appendChild(b);
-                        p.appendChild(
-                            document.createTextNode(value ?? '')
-                        );
+                const data = await response.json();
+                result.replaceChildren();
 
-                        result.appendChild(p);
-                    });
-                })
-                .catch(() => {
-                    document.getElementById('result').textContent =
-                        'Unable to retrieve student information.';
+                const details = [
+                    ['Student ID', data.student_id],
+                    ['Name', data.name],
+                    ['Program', data.program],
+                    ['Year', data.year],
+                    ['Section', data.section]
+                ];
+
+                details.forEach(([label, value]) => {
+                    const p = document.createElement('p');
+                    const b = document.createElement('b');
+
+                    b.textContent = label + ': ';
+                    p.appendChild(b);
+                    p.appendChild(
+                        document.createTextNode(value ?? '')
+                    );
+
+                    result.appendChild(p);
                 });
+            } catch (error) {
+                result.textContent =
+                    'Unable to retrieve student information.';
+            }
         }
 
 
         // GREETING API
-        function sayHello() {
+        async function sayHello() {
             const name =
                 document.getElementById('greetingName').value.trim();
 
@@ -394,110 +431,110 @@
                 return;
             }
 
-            fetch('/greet?name=' + encodeURIComponent(name))
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Request failed');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    result.textContent =
-                        data.message || data.greeting ||
-                        JSON.stringify(data);
-                })
-                .catch(() => {
-                    result.textContent =
-                        'Unable to connect to Greeting API.';
-                });
+            try {
+                const response = await fetch(
+                    '/greet?name=' + encodeURIComponent(name)
+                );
+
+                if (!response.ok) {
+                    throw new Error('Request failed');
+                }
+
+                const data = await response.json();
+
+                result.textContent =
+                    data.message || data.greeting ||
+                    JSON.stringify(data);
+            } catch (error) {
+                result.textContent =
+                    'Unable to connect to Greeting API.';
+            }
         }
 
 
         // MY SKILLS API
-        function loadMySkills() {
+        async function loadMySkills() {
             const result =
                 document.getElementById('skillsResult');
 
-            fetch('/my-skills')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Request failed');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    result.textContent = '';
+            try {
+                const response = await fetch('/my-skills');
 
-                    const details = [
-                        ['Name', data.name],
-                        ['Program', data.program],
-                        [
-                            'Skills',
-                            Array.isArray(data.skills)
-                                ? data.skills.join(', ')
-                                : data.skills
-                        ],
-                        ['Interest', data.interest]
-                    ];
+                if (!response.ok) {
+                    throw new Error('Request failed');
+                }
 
-                    details.forEach(([label, value]) => {
-                        const p = document.createElement('p');
-                        const b = document.createElement('b');
+                const data = await response.json();
+                result.replaceChildren();
 
-                        b.textContent = label + ': ';
-                        p.appendChild(b);
-                        p.appendChild(
-                            document.createTextNode(value ?? '')
-                        );
+                const details = [
+                    ['Name', data.name],
+                    ['Program', data.program],
+                    [
+                        'Skills',
+                        Array.isArray(data.skills)
+                            ? data.skills.join(', ')
+                            : data.skills
+                    ],
+                    ['Interest', data.interest]
+                ];
 
-                        result.appendChild(p);
-                    });
-                })
-                .catch(() => {
-                    result.textContent =
-                        'Unable to retrieve custom API data.';
+                details.forEach(([label, value]) => {
+                    const p = document.createElement('p');
+                    const b = document.createElement('b');
+
+                    b.textContent = label + ': ';
+                    p.appendChild(b);
+                    p.appendChild(
+                        document.createTextNode(value ?? '')
+                    );
+
+                    result.appendChild(p);
                 });
+            } catch (error) {
+                result.textContent =
+                    'Unable to retrieve custom API data.';
+            }
         }
 
 
         // STUDENTS FROM DATABASE
-        function loadStudents() {
+        async function loadStudents() {
             const studentList =
                 document.getElementById('studentList');
 
-            fetch('/students')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Request failed');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    studentList.textContent = '';
+            try {
+                const response = await fetch('/students');
 
-                    if (!data.length) {
-                        studentList.textContent =
-                            'No student records found.';
-                        return;
-                    }
+                if (!response.ok) {
+                    throw new Error('Request failed');
+                }
 
-                    data.forEach(student => {
-                        const p = document.createElement('p');
+                const data = await response.json();
+                studentList.replaceChildren();
 
-                        p.textContent =
-                            student.student_id + ' - ' +
-                            student.name + ' | ' +
-                            student.program + ' | Year ' +
-                            student.year + ' | Section ' +
-                            student.section;
-
-                        studentList.appendChild(p);
-                    });
-                })
-                .catch(() => {
+                if (!Array.isArray(data) || data.length === 0) {
                     studentList.textContent =
-                        'Unable to retrieve student records.';
+                        'No student records found.';
+                    return;
+                }
+
+                data.forEach(student => {
+                    const p = document.createElement('p');
+
+                    p.textContent =
+                        student.student_id + ' - ' +
+                        student.name + ' | ' +
+                        student.program + ' | Year ' +
+                        student.year + ' | Section ' +
+                        student.section;
+
+                    studentList.appendChild(p);
                 });
+            } catch (error) {
+                studentList.textContent =
+                    'Unable to retrieve student records.';
+            }
         }
 
 
@@ -585,8 +622,8 @@
                     const actionCell = document.createElement('td');
                     const selectButton = document.createElement('button');
 
-                    selectButton.textContent = 'Select';
                     selectButton.type = 'button';
+                    selectButton.textContent = 'Select';
                     selectButton.className = 'select-btn';
 
                     selectButton.addEventListener('click', () => {
@@ -743,9 +780,7 @@
             try {
                 const response = await fetch(
                     '/api/students/' + selectedId,
-                    {
-                        method: 'DELETE'
-                    }
+                    { method: 'DELETE' }
                 );
 
                 const result = await response.json();
@@ -777,16 +812,19 @@
         }
 
 
-        // STEP 8 AND STEP 9: DISPLAY RECORDS SAFELY
+        // STEP 8 AND STEP 9: DISPLAY RECORDS
         function displayRecords(records, tableId) {
             const tableBody = document.getElementById(tableId);
             tableBody.replaceChildren();
+
+            const isPartnerTable = tableId === 'classmateRecords';
+            const columnCount = isPartnerTable ? 7 : 6;
 
             if (!Array.isArray(records) || records.length === 0) {
                 const row = document.createElement('tr');
                 const cell = document.createElement('td');
 
-                cell.colSpan = 6;
+                cell.colSpan = columnCount;
                 cell.textContent = 'No student records found.';
 
                 row.appendChild(cell);
@@ -810,8 +848,82 @@
                     row.appendChild(cell);
                 });
 
+                if (isPartnerTable) {
+                    const actionCell = document.createElement('td');
+
+                    // VIEW BUTTON
+                    const viewButton = document.createElement('button');
+                    viewButton.type = 'button';
+                    viewButton.className = 'view-btn';
+                    viewButton.textContent = 'View';
+
+                    viewButton.addEventListener('click', () => {
+                        alert(
+                            'Student ID: ' + student.student_id + '\n' +
+                            'Name: ' + student.name + '\n' +
+                            'Program: ' + student.program + '\n' +
+                            'Year: ' + student.year + '\n' +
+                            'Section: ' + student.section
+                        );
+                    });
+
+                    // SAVE BUTTON
+                    const saveButton = document.createElement('button');
+                    saveButton.type = 'button';
+                    saveButton.className = 'save-btn';
+                    saveButton.textContent = 'Save to My Database';
+
+                    saveButton.addEventListener('click', () => {
+                        importPartnerStudent(student);
+                    });
+
+                    actionCell.appendChild(viewButton);
+                    actionCell.appendChild(saveButton);
+                    row.appendChild(actionCell);
+                }
+
                 tableBody.appendChild(row);
             });
+        }
+
+
+        // STEP 5: IMPORT PARTNER STUDENT INTO MY DATABASE
+        async function importPartnerStudent(student) {
+            const message =
+                document.getElementById('comparisonMessage');
+
+            try {
+                const response = await fetch('/import-student', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(student)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        result.error || 'Unable to save student.'
+                    );
+                }
+
+                message.style.color = 'green';
+                message.textContent =
+                    result.message ||
+                    student.name + ' saved successfully.';
+
+                await Promise.all([
+                    loadMyRecords(),
+                    loadCrudStudents(),
+                    loadStudents()
+                ]);
+            } catch (error) {
+                message.style.color = 'red';
+                message.textContent =
+                    'Import failed: ' + error.message;
+            }
         }
 
 
@@ -831,9 +943,11 @@
 
                 displayRecords(records, 'myRecords');
 
+                message.style.color = 'green';
                 message.textContent =
                     'Your own database records loaded successfully.';
             } catch (error) {
+                message.style.color = 'red';
                 message.textContent = error.message;
             }
         }
@@ -848,25 +962,35 @@
                 const response = await fetch('/partner-records');
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(
-                        errorData.details ||
-                        errorData.error ||
-                        'Unable to retrieve classmate records.'
-                    );
+                    let errorMessage =
+                        'Unable to retrieve classmate records.';
+
+                    try {
+                        const errorData = await response.json();
+                        errorMessage =
+                            errorData.error || errorData.details ||
+                            errorMessage;
+                    } catch (ignored) {
+                        // Keep the default error message.
+                    }
+
+                    throw new Error(errorMessage);
                 }
 
                 const records = await response.json();
 
                 displayRecords(records, 'classmateRecords');
 
+                message.style.color = 'green';
                 message.textContent =
                     "Classmate's records loaded successfully.";
 
                 console.log("Classmate's records:", records);
             } catch (error) {
+                message.style.color = 'red';
                 message.textContent =
-                    'Unable to load classmate records: ' + error.message;
+                    'Unable to load classmate records: ' +
+                    error.message;
 
                 console.error('Classmate API error:', error);
             }
