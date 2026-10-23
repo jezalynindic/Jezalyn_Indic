@@ -107,30 +107,41 @@ def say_hello():
 # ADD A STUDENT (POST)
 @app.route('/api/students', methods=['POST'])
 def add_student():
-    data = request.get_json()
+    data = request.get_json(silent=True)
 
-    conn = get_db_connection()
-    cursor = conn.execute(
-        """INSERT INTO students
-        (student_id, name, program, year, section)
-        VALUES (?, ?, ?, ?, ?)""",
-        (
-            data['student_id'],
-            data['name'],
-            data['program'],
-            data['year'],
-            data['section']
+    if not isinstance(data, dict):
+        return jsonify({"error": "A valid JSON object is required"}), 400
+
+    required = ['student_id', 'name', 'program', 'year', 'section']
+    if any(data.get(field) is None or data.get(field) == ''
+           for field in required):
+        return jsonify({"error": "Please provide all student fields"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.execute(
+            """INSERT INTO students
+            (student_id, name, program, year, section)
+            VALUES (?, ?, ?, ?, ?)""",
+            (
+                data['student_id'],
+                data['name'],
+                data['program'],
+                data['year'],
+                data['section']
+            )
         )
-    )
+        conn.commit()
+        new_id = cursor.lastrowid
+        conn.close()
 
-    conn.commit()
-    new_id = cursor.lastrowid
-    conn.close()
+        return jsonify({
+            "message": "Student added",
+            "id": new_id
+        }), 201
 
-    return jsonify({
-        "message": "Student added",
-        "id": new_id
-    }), 201
+    except (sqlite3.Error, TypeError, ValueError):
+        return jsonify({"error": "Unable to add student"}), 500
 
 
 # GET A STUDENT BY ID (API)
@@ -151,7 +162,15 @@ def api_get_student(id):
 # UPDATE A STUDENT (PUT)
 @app.route('/api/students/<int:id>', methods=['PUT'])
 def update_student(id):
-    data = request.get_json()
+    data = request.get_json(silent=True)
+
+    if not isinstance(data, dict):
+        return jsonify({"error": "A valid JSON object is required"}), 400
+
+    required = ['student_id', 'name', 'program', 'year', 'section']
+    if any(data.get(field) is None or data.get(field) == ''
+           for field in required):
+        return jsonify({"error": "Please provide all student fields"}), 400
 
     conn = get_db_connection()
     cursor = conn.execute(
@@ -168,7 +187,6 @@ def update_student(id):
             id
         )
     )
-
     conn.commit()
     updated = cursor.rowcount
     conn.close()
@@ -186,7 +204,6 @@ def delete_student(id):
     cursor = conn.execute(
         'DELETE FROM students WHERE id = ?', (id,)
     )
-
     conn.commit()
     deleted = cursor.rowcount
     conn.close()
@@ -207,34 +224,98 @@ def api_students():
     return jsonify([dict(row) for row in rows])
 
 
-# GET CLASSMATE'S STUDENTS - STEP 8
+# STEP 3 & 4 - GET PARTNER'S STUDENTS
+@app.route('/partner-records', methods=['GET'])
 @app.route('/classmate-students', methods=['GET'])
 def get_classmate_students():
-    classmate_api = "https://flask-palec-sethclaire-api.onrender.com/students"
+    classmate_api = (
+        "https://flask-palec-sethclaire-api.onrender.com/students"
+    )
 
     try:
-       
         response = requests.get(classmate_api, timeout=20)
         response.raise_for_status()
 
         try:
-            return jsonify(response.json())
+            records = response.json()
         except ValueError:
             return jsonify({
-                "error": "Classmate API did not return valid JSON",
-                "status_code": response.status_code,
-                "content_type": response.headers.get(
-                    "Content-Type", "unknown"
-                ),
-                "response_preview": response.text[:300]
+                "error": "Classmate API did not return valid JSON"
             }), 502
 
-    except requests.RequestException as e:
+        if not isinstance(records, list):
+            return jsonify({
+                "error": "Classmate API did not return a list of students"
+            }), 502
+
+        return jsonify(records)
+
+    except requests.RequestException:
         return jsonify({
-            "error": "Unable to get classmate records",
-            "details": str(e)
+            "error": "Unable to retrieve partner data"
         }), 502
 
+
+# STEP 5 - IMPORT A PARTNER STUDENT INTO MY DATABASE
+@app.route('/import-student', methods=['POST'])
+def import_student():
+    data = request.get_json(silent=True)
+
+    if not isinstance(data, dict):
+        return jsonify({
+            "error": "A valid student JSON object is required"
+        }), 400
+
+    required = ['student_id', 'name', 'program', 'year', 'section']
+
+    if any(data.get(field) is None or data.get(field) == ''
+           for field in required):
+        return jsonify({
+            "error": "Partner record is missing required student fields"
+        }), 400
+
+    try:
+        year = int(data['year'])
+        if year < 1:
+            raise ValueError
+    except (ValueError, TypeError):
+        return jsonify({"error": "Student year must be a valid number"}), 400
+
+    conn = None
+
+    try:
+        conn = get_db_connection()
+        conn.execute(
+            """INSERT INTO students
+            (student_id, name, program, year, section, source)
+            VALUES (?, ?, ?, ?, ?, ?)""",
+            (
+                str(data['student_id']),
+                str(data['name']),
+                str(data['program']),
+                year,
+                str(data['section']),
+                'Classmate API'
+            )
+        )
+        conn.commit()
+
+        return jsonify({
+            "message": "Remote record saved",
+            "source": "Classmate API"
+        }), 201
+
+    except sqlite3.Error:
+        if conn is not None:
+            conn.rollback()
+
+        return jsonify({
+            "error": "Unable to save record. Check that your database has a source column."
+        }), 500
+
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 if __name__ == '__main__':

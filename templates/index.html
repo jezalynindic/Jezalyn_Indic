@@ -328,6 +328,7 @@
                         <th>Program</th>
                         <th>Year</th>
                         <th>Section</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
 
@@ -844,7 +845,7 @@
                 document.getElementById('comparisonMessage');
 
             try {
-                const response = await fetch('/classmate-students');
+                const response = await fetch('/partner-records');
 
                 if (!response.ok) {
                     const errorData = await response.json();
